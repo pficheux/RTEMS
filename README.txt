@@ -45,3 +45,4 @@ $ qemu-system-i386 -kernel o-optimize/helloworld.exe
 
 idem avec timer POSIX
 
+- Voir portage BBB -> https://devel.rtems.org/wiki/Developer/Projects/Open/ImproveBeagleBSP
