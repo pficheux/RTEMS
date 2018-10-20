@@ -65,7 +65,7 @@ $ ../source-builder/sb-set-builder --log=l-arm.txt --prefix=$HOME/RTEMS/rtems-ar
 
 $ export PATH=$PATH:~/RTEMS/rtems-arm/bin
 $ cd rtems_git/
-$ mkdir build_arm && cd build_arm
+$ mkdir build && cd build
 $ $HOME/RTEMS/rtems_git/configure --target=arm-rtems5 --disable-cxx --enable-rtemsbsp=raspberrypi --prefix=$HOME/RTEMS/target_rpi
 $ make
 $ make install
@@ -87,6 +87,94 @@ $ cp o-optimize/timer.ralf /media/pierre/48BD-FC67/
 
 -> OK
 
+- Test BBB
 
+$ mkdir build && cd build
+$ $HOME/RTEMS/rtems_git/configure --target=arm-rtems5 --disable-cxx --enable-rtemsbsp=beagleboneblack --prefix=$HOME/RTEMS/target_bbb
+$ make
+$ make install
+
+* Création set_env_bbb.sh
+
+#!/bin/sh
+
+export PATH=$PATH:~/RTEMS/rtems-arm/bin
+export RTEMS_MAKEFILE_PATH=~/RTEMS/target_bbb/arm-rtems5/beagleboneblack
+
+
+* Exemple timer
+
+$ . ~/RTEMS/set_env_bbb.sh 
+$ make clean
+$ make
+
+Suite d'après le post https://lists.rtems.org/pipermail/users/2018-March/032133.html
+
+$ arm-rtems5-objcopy timer.exe -O binary timer.bin
+$ gzip -9 timer.bin 
+$ mkimage -A arm -O linux -T kernel -a 0x80000000 -e 0x80000000 -n RTEMS -d timer.bin.gz timer.img
+
+Chargement de timer.img sur la avec SD-card ou TFTP
+
+1- SD
+
+On crée le fichier uEnv.txt avec les lignes suivantes dans uEnv.txt (voir le lien)
+
+setenv bootdelay 5
+uenvcmd=run boot
+boot=fatload mmc 0 0x80800000 timer.img ; fatload mmc 0 0x88000000 am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000
+
+
+2- TFT
+
+On charge l'image timer.img avec TFTP
+
+=> dhcp 0x80800000 192.168.1.23:timer.img                                       
+link up on port 0, speed 100, full duplex                                       
+BOOTP broadcast 1                                                               
+*** Unhandled DHCP Option in OFFER/ACK: 125                                     
+*** Unhandled DHCP Option in OFFER/ACK: 125                                     
+DHCP client bound to address 192.168.1.39 (93 ms)                               
+Using ethernet@4a100000 device                                                  
+TFTP from server 192.168.1.23; our IP address is 192.168.1.39                   
+Filename 'timer.img'.                                                           
+Load address: 0x80800000                                                        
+Loading: ##############                                                         
+         160.2 KiB/s                                                            
+done                                                                            
+Bytes transferred = 66601 (10429 hex)                                           
+
+On charge le DT depuis la SD
+
+=> fatload mmc 0 0x88000000 am335x-boneblack.dtb
+reading am335x-boneblack.dtb                                                    
+37853 bytes read in 18 ms (2 MiB/s)
+
+On démarre l'appli
+
+=> bootm 0x80800000 - 0x88000000 
+## Booting kernel from Legacy Image at 80800000 ...                             
+   Image Name:   RTEMS                                                          
+   Created:      2018-10-20  11:08:29 UTC                                       
+   Image Type:   ARM Linux Kernel Image (gzip compressed)                       
+   Data Size:    66537 Bytes = 65 KiB                                           
+   Load Address: 80000000                                                       
+   Entry Point:  80000000                                                       
+   Verifying Checksum ... OK                                                    
+## Flattened Device Tree blob at 88000000                                       
+   Booting using the fdt blob at 0x88000000                                     
+   Uncompressing Kernel Image ... OK                                            
+   Loading Device Tree to 8fff3000, end 8ffff3dc ... OK                         
+                                                                                
+Starting kernel ...                                                             
+                                                                                
+RTEMS Beagleboard: am335x-based                                                 
+                                                                                
+ *** Ticks per second in your system: 100                                       
+Got signal 14 (1)                                                               
+Got signal 14 (2)                                                               
+Got signal 14 (3)                                                               
+Got signal 14 (4)                
+...
 
 
