@@ -11,7 +11,9 @@
 
 void got_signal (int sig)
 {
-  printf ("Got signal %d\n", sig);
+  static int cnt = 0;
+
+  printf ("Got signal %d (%d)\n", sig, ++cnt);
 }
 
 #ifdef __rtems__
@@ -27,7 +29,7 @@ void main (int ac, char **av)
   sigset_t mask;
 
 #ifdef __rtems__
-  printf("\nTicks per second in your system: %d\n", rtems_clock_get_ticks_per_second());
+  printf("\n *** Ticks per second in your system: %d\n", rtems_clock_get_ticks_per_second());
 #endif 
 
   sig.sa_flags = 0;
@@ -46,8 +48,8 @@ void main (int ac, char **av)
 
   ti.it_value.tv_sec = 0;
   ti.it_value.tv_nsec = 50000000;
-  ti.it_interval.tv_sec = 0;
-  ti.it_interval.tv_nsec = 500000000;
+  ti.it_interval.tv_sec = 1;
+  ti.it_interval.tv_nsec = 0;
 
   timer_settime(myTimer, 0, &ti, &ti_old);
 
