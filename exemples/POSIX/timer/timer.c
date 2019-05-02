@@ -1,11 +1,5 @@
-#ifdef __rtems__
-#include <bsp.h>
-#else
-#include <unistd.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <signal.h>
 #include <time.h>
 
@@ -16,21 +10,13 @@ void got_signal (int sig)
   printf ("Got signal %d (%d)\n", sig, ++cnt);
 }
 
-#ifdef __rtems__
 void *POSIX_Init() 
-#else
-void main (int ac, char **av)
-#endif
 {
   timer_t myTimer;
   struct sigaction sig;
   struct itimerspec ti, ti_old;
   struct sigevent event;
   sigset_t mask;
-
-#ifdef __rtems__
-  printf("\n *** Ticks per second in your system: %d\n", rtems_clock_get_ticks_per_second());
-#endif 
 
   sig.sa_flags = 0;
   sig.sa_handler = got_signal;
@@ -57,8 +43,6 @@ void main (int ac, char **av)
     pause ();
 }
 
-#ifdef __rtems__
-
 #define CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
 #define CONFIGURE_APPLICATION_NEEDS_CLOCK_DRIVER
 
@@ -67,5 +51,3 @@ void main (int ac, char **av)
 #define CONFIGURE_POSIX_INIT_THREAD_TABLE
 #define CONFIGURE_INIT
 #include <rtems/confdefs.h>
-
-#endif
