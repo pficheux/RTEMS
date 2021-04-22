@@ -178,3 +178,87 @@ Got signal 14 (4)
 ...
 
 
+22/04/2021
+==========
+
+- Test rtems-5.1 (version stable)
+
+https://ftp.rtems.org/pub/rtems/releases/5/5.1/#rtems-documentation
+https://ftp.rtems.org/pub/rtems/releases/5/5.1/sources/rtems-5.1.tar.xz
+
+* Nouveau test QEMU/i386
+
+-> recompilation de GCC afin d'éviter l'erreur SOCKCLOSE (newlib)
+-> compilation BSP
+
+$ . ./set_env_i386.sh
+$ cd rtems-5.1
+$ mkdir build && cd build
+$ /media/pierre/SANDISK_PF/RTEMS/rtems_git/configure  --target=i386-rtems5 --disable-cxx --enable-rtemsbsp=pc386 --prefix=/media/pierre/SANDISK_PF/RTEMS/target_i386
+
+-> test des applications POSIX OK :-)
+
+$ qemu-system-i386 -kernel o-optimize/timer.exe (ou helloworld.exe)
+
+-> même test sur la branche 5.1 de la version Git
+
+* Création du compilateur RISC-V 
+
+$ git clone git://git.rtems.org/rtems-source-builder.git
+$ git checkout -b v5.1 5.1
+
+$ cd rtems-source-builder/
+$ ./source-builder/sb-check
+$ cd rtems
+$ ../source-builder/sb-set-builder --log=l-riscv.txt --prefix=/media/pierre/SANDISK_PF/RTEMS/rtems-riscv 5/rtems-riscv
+
+* Compilation BSP rv32imafdc
+
+voir https://www.mail-archive.com/users@rtems.org/msg02775.html
+
+
+$ /media/pierre/SANDISK_PF/RTEMS/rtems-5.1/configure --target=riscv-rtems5 --disable-cxx --enable-rtemsbsp=rv32imafdc --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv32imafdc
+$ make -j 12
+$ make install
+
+* Compilation QEMU RISC-V 32 et 64
+
+$ sudo apt-get install ninja-build libpixman-1-dev
+
+$ git clone https://github.com/qemu/qemu.git qemu_git
+$ cd qemu_git/
+$ git checkout -b 5.2.0 v5.2.0
+$ make build && cd build
+$  ../configure --target-list=riscv64-softmmu,riscv32-softmmu --prefix=/opt/qemu
+$ sudo make install
+
+* Test des application RTEMS (POSIX)
+
+Nouveau fichier set_env_riscv32.sh
+
+#!/bin/sh
+
+BASE=/media/pierre/SANDISK_PF
+
+export PATH=$PATH:$BASE/RTEMS/rtems-riscv/bin
+export RTEMS_MAKEFILE_PATH=$BASE/RTEMS/target_rv32imafdc/riscv-rtems5/rv32imafdc
+
+$ . ./set_env_riscv32.sh
+
+$ cd exemples/POSIX/timer
+$ make clean && make
+
+$ export PATH=/opt/qemu/bin:$PATH
+$ qemu-system-riscv32 -machine virt -m 2G -serial stdio -monitor none -bios o-optimize/timer.exe -nographic
+Got signal 14 (1)
+Got signal 14 (2)
+Got signal 14 (3)
+
+-> l'option "-monitor none" permet de fermer QEMU avec Ctrl-C
+-> l'option -m 2G n'est pas obligatoire
+
+-> Même test avec helloworld OK
+
+-> ne fonctionne pas avec rv64imafdc (pb de compilateur ??)
+
+
