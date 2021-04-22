@@ -223,6 +223,8 @@ $ make install
 
 * Compilation QEMU RISC-V 32 et 64
 
+-> voir https://risc-v-getting-started-guide.readthedocs.io/en/latest/linux-qemu.html
+
 $ sudo apt-get install ninja-build libpixman-1-dev
 
 $ git clone https://github.com/qemu/qemu.git qemu_git
