@@ -217,7 +217,7 @@ $ ../source-builder/sb-set-builder --log=l-riscv.txt --prefix=/media/pierre/SAND
 voir https://www.mail-archive.com/users@rtems.org/msg02775.html
 
 
-$ /media/pierre/SANDISK_PF/RTEMS/rtems-5.1/configure --target=riscv-rtems5 --disable-cxx --enable-rtemsbsp=rv32imafdc --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv32imafdc
+$ /media/pierre/SANDISK_PF/RTEMS/rtems-5.1/configure --target=riscv-rtems5 --disable-cxx --enable-rtemsbsp=rv32imafdc --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv32imafdcb
 $ make -j 12
 $ make install
 
@@ -263,4 +263,58 @@ Got signal 14 (3)
 
 -> ne fonctionne pas avec rv64imafdc (pb de compilateur ??)
 
+23/4/2021
+=========
+
+- Test BSP rv32imacfdc -> pb avec test pl06
+
+création d'un fichier rv32imafdc-testsuite.tcfg pour l'exclure mais ne change rien
+
+https://www.mail-archive.com/users@rtems.org/msg02746.html
+
+- Test avec QEMU/x86
+
+https://docs.rtems.org/branches/master/user/tools/tester.html#
+
+* Installation outils rtems-test (Git -> branche 5)
+
+$ ./waf configure --prefix=/media/pierre/SANDISK_PF/RTEMS/5
+$ ./waf 
+$ ./waf install
+$ ./waf test
+
+* Test psx01.exe en mode trace !
+
+-> le nom du BSP est différent (pc-qemu) !
+
+$ rtems-test --list-bsps | grep pc
+  pc-qemu
+  pc
+
+$ cd build
+$ rtems-test --trace --rtems-bsp=pc-qemu  --rtems-tools=/media/pierre/SANDISK_PF/RTEMS/5 i386-rtems5/c/pc386/testsuites/psxtests/psx02.exe
+...
+[1/1] p:0 f:0 u:0 e:0 I:0 B:0 t:0 i:0 W:0 | i386/pc686: psx01.exe
+exe: spawn: qemu-system-i386 -no-reboot -nographic -monitor none -serial stdio -append --console=/dev/com1 -kernel i386-rtems5/c/pc386/testsuites/psxtests/psx01.exe
+[1/1] p:0 f:0 u:0 e:0 I:0 B:0 t:0 i:0 W:0 | i386/pc686: psx01.exe
+
+Passed:        1
+Failed:        0
+User Input:    0
+Expected Fail: 0
+Indeterminate: 0
+Benchmark:     0
+Timeout:       0
+Invalid:       0
+Wrong Version: 0
+Wrong Build:   0
+Wrong Tools:   0
+----------------
+Total:         1
+
+Average test time: 0:00:02.504795
+Testing time     : 0:00:02.504795
+
+
+-> à refaire avec BSP RISC-V !
 
