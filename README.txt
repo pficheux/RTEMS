@@ -356,4 +356,25 @@ export RTEMS_MAKEFILE_PATH=$BASE/RTEMS/target_i386_master/i386-rtems6/pc386
 
 Même test pour Pi 1 -> toujours rien !
 
+- Test 4.12 (perso/RTEMS)
 
+OK avec un ancien firmware Pi 1 B+ (22d8c910f4c53118f9cf85c038d7d8e307efc110)
+KO avec un firmware récent (Yocto / Dunfell)
+
+-> Passage de 4.12 à 5 dans le dépôt RTEMS
+
+commit 003b19282ce09363c9f0b8730e1514c0b5f22374
+Author: Joel Sherrill <joel@rtems.org>
+Date:   Mon May 14 15:11:15 2018 -0500
+
+    rtems-bsps: Change 4.12 to 5
+
+le test Pi sur RTEMS 5 (qui était OK)
+
+commit ab77c85fe0d973595fb35cfde1abd3f9e3c5450b
+Author: Pierre FICHEUX <pierre.ficheux@smile.fr>
+Date:   Sat Oct 20 12:47:19 2018 +0200
+
+    Test RPi
+
+-> tester la version 5 (003b19282ce09363c9f0b8730e1514c0b5f22374)
