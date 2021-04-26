@@ -318,3 +318,42 @@ Testing time     : 0:00:02.504795
 
 -> à refaire avec BSP RISC-V !
 
+25/4/2021
+=========
+
+- Test Pi 1 B+ avec version 4.1 KO
+
+26/4/2021
+=========
+
+- Nouveau test avec version master (6)
+
+-> Compilateur
+
+$ cd rtems
+$ ../source-builder/sb-set-builder --log=l-i386-master.txt --prefix=/media/pierre/SANDISK_PF/RTEMS/rtems-i386-master 6/i386-master
+
+-> BSP
+
+OK en configurant avec 'waf' (rtems-bootstrap / autotools ne fonctionne pas), voir https://docs.rtems.org/branches/master/user/bld/#migration-from-autoconf-automake
+
+
+$ export PATH=<path>/rtems-i386-master/bin:$PATH
+
+$ ./waf configure --prefix=<bsp-install-dir>
+$ ./waf
+$ ./waf install
+
+Le config.ini contient :
+
+[i386/pc386]
+RTEMS_POSIX_API=True
+
+-> test timer.exe OK avec :
+
+export PATH=$PATH:$BASE/RTEMS/rtems-i386-master/bin
+export RTEMS_MAKEFILE_PATH=$BASE/RTEMS/target_i386_master/i386-rtems6/pc386
+
+Même test pour Pi 1 -> toujours rien !
+
+
