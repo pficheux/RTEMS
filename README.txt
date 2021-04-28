@@ -122,7 +122,7 @@ On crée le fichier uEnv.txt avec les lignes suivantes dans uEnv.txt (voir le li
 
 setenv bootdelay 5
 uenvcmd=run boot
-boot=fatload mmc 0 0x80800000 timer.img ; fatload mmc 0 0x88000000 am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000
+boot=fatload mmc 0 0x80800000 timer.img ; fatload mmc 0 0x88000000!! am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000
 
 
 2- TFT
@@ -358,7 +358,14 @@ Même test pour Pi 1 -> toujours rien !
 
 - Test 4.12 (perso/RTEMS)
 
-OK avec un ancien firmware Pi 1 B+ (22d8c910f4c53118f9cf85c038d7d8e307efc110)
+OK avec un ancien firmware Pi 1 B+ (22d8c910f4c53118f9cf85c038d7d8e307efc110 de 2015)
+
+commit 22d8c910f4c53118f9cf85c038d7d8e307efc110 (HEAD)
+Author: popcornmix <popcornmix@gmail.com>
+Date:   Tue Dec 15 16:29:19 2015 +0000
+
+    kernel: Bump to 4.1.15
+
 KO avec un firmware récent (Yocto / Dunfell)
 
 -> Passage de 4.12 à 5 dans le dépôt RTEMS
@@ -378,3 +385,19 @@ Date:   Sat Oct 20 12:47:19 2018 +0200
     Test RPi
 
 -> tester la version 5 (003b19282ce09363c9f0b8730e1514c0b5f22374)
+
+27/4/2021
+=========
+
+- Test de 5.0.0-m1911, aucun résultat y compris sur i386 (erreurs de compilation sur __RTEMS_VERSION__
+
+28/4/2021
+=========
+
+- Test sur BBB, tout fonctionne sur 5 et 6 (master) :-)
+
+$ arm-rtems6-objcopy timer.exe -O binary timer.bin
+$ mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS -d timer.bin rtems.img
+
+=> setenv start_rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000!! am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
+
