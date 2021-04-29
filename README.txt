@@ -401,3 +401,46 @@ $ mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS
 
 => setenv start_rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000!! am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
 
+29/4/2021
+=========
+
+- Nouveau test RISC-V 64
+
+$ ./waf configure --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv64imafd_medan$ ./waf 
+$ ./waf install
+
+$ export PATH=$PATH:/opt/qemu/bin/
+$ rtems-test --trace --rtems-bsp=rv64imafd_medany riscv/rv64imafd_medany/testsuites/psxtests/psx01.exe 
+...
+exe: spawn: qemu-system-riscv64 -no-reboot -nographic -net none -machine virt -m 64M -kernel riscv/rv64imafd_medany/testsuites/psxtests/psx01.exe
+[1/1] p:0 f:0 u:0 e:0 I:0 B:0 t:0 L:0 i:0 W:0 | riscv64/rv64imafd_medany: psx01.exe
+Result: invalid    Time: 0:00:00.251285 psx01.exe
+=>  exe: qemu-system-riscv64 -no-reboot -nographic -net none -machine virt -m 64M -kernel riscv/rv64imafd_medany/testsuites/psxtests/psx01.exe
+] rom: requested regions overlap (rom phdr #0: riscv/rv64imafd_medany/testsuites/psxtests/psx01.exe. free=0x0000000080011488, addr=0x0000000080000000)
+] qemu-system-riscv64: rom check and register reset failed
+
+Passed:        0
+Failed:        0
+User Input:    0
+Expected Fail: 0
+Indeterminate: 0
+Benchmark:     0
+Timeout:       0
+Test too long: 0
+Invalid:       1
+Wrong Version: 0
+Wrong Build:   0
+Wrong Tools:   0
+----------------
+Total:         1
+Invalid:
+ psx01.exe
+Average test time: 0:00:00.752206
+Testing time     : 0:00:00.752206
+
+-> Idem avec l'exemple timer :
+
+$ qemu-system-riscv64  -no-reboot -nographic -net none -machine virt -m 64M -kernel o-optimize/timer.exe 
+rom: requested regions overlap (rom phdr #0: o-optimize/timer.exe. free=0x0000000080011488, addr=0x0000000080000000)
+qemu-system-riscv64: rom check and register reset failed
+
