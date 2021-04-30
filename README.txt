@@ -399,7 +399,7 @@ Date:   Sat Oct 20 12:47:19 2018 +0200
 $ arm-rtems6-objcopy timer.exe -O binary timer.bin
 $ mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS -d timer.bin rtems.img
 
-=> setenv start_rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000!! am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
+=> setenv start_rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000 am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
 
 29/4/2021
 =========
@@ -444,3 +444,76 @@ $ qemu-system-riscv64  -no-reboot -nographic -net none -machine virt -m 64M -ker
 rom: requested regions overlap (rom phdr #0: o-optimize/timer.exe. free=0x0000000080011488, addr=0x0000000080000000)
 qemu-system-riscv64: rom check and register reset failed
 
+30/4/2021
+=========
+
+- Pour Pi3 tester le commit  19efa9a0b9692ffdc1d46bc81284e415ec50e60e, voir https://lists.rtems.org/pipermail/devel/2020-February/057403.html
+
+I was successfully able to boot through tftp using these commands
+but still I had to manually load the DTB
+my uboot commands were
+1) tftp 0x200000 rtems.img
+2) fatload mmc 0 0x1000 bcm2710-rpi-3-b.dtb
+3) bootm 0x200000 - 0x1000
+this works for me on pi3
+
+$ cd rtems_pi3
+$ ./bootstrap
+$ mkdir build && cd build
+$ <path>/rtems_pi3/configure --target=arm-rtems5 --disable-cxx --enable-rtemsbsp=raspberrypi2 --prefix=<path>/target_rpi3
+
+Création .img
+
+$ mkimage -A arm -O linux -T kernel -a 0x200000 -e 0x200080 -C none -d timer.ralf rtems.img
+
+
+Traces sur la console :
+                                                                                
+Starting kernel ...                                                             
+      Z5����{N                                                               
+���`h
+
+Option --console=/dev/ttyS0 nécessaire mais ou la mettre ?
+
+- Utilisation de config.txt (voir https://github.com/gs-niteesh/rpi3_RTEMS) avec
+
+core_freq=250 <-- indispensable
+enable-uart=1
+kernel=u-boot.bin <-- celui de Yocto/dunfell (32 bits)
+
+- Modif de console-config.c pour utilise mini-UART par défaut
+
+-> OK :-)
+
+U-Boot> pri rtems                                                               
+rtems=fatload mmc 0 0x200000 rtems.img; fatload mmc 0 0x1000 bcm2710-rpi-3-b.dtb
+; bootm 0x200000 - 0x1000                                                       
+U-Boot> run rtems
+
+Starting kernel ...                                                             
+...                                                                                
+                                                                                
+RTEMS RPi 3B 1.2 (1GB) [00a02082]                                               
+Got signal 14 (1)                                                               
+Got signal 14 (2)                                                               
+Got signal 14 (3)   
+...
+
+
+
+U-Boot> pri rtems                                                               
+rtems=fatload mmc 0 0x200000 rtems.img; fatload mmc 0 0x1000 bcm2710-rpi-3-b.dtb
+; bootm 0x200000 - 0x1000                                                       
+U-Boot> run rtems
+
+Starting kernel ...                                                             
+...                                                                                
+                                                                                
+RTEMS RPi 3B 1.2 (1GB) [00a02082]                                               
+Got signal 14 (1)                                                               
+Got signal 14 (2)                                                               
+Got signal 14 (3)   
+...
+
+-> devrait fonctionner sans U-Boot
+-> option --console= ajouté ensuite, au début on lisait la config DT...
