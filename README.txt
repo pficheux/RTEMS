@@ -516,4 +516,12 @@ Got signal 14 (3)
 ...
 
 -> devrait fonctionner sans U-Boot
--> option --console= ajouté ensuite, au début on lisait la config DT...
+
+
+1/5/2021
+========
+
+- Modif example -> utiliser #define CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER !!
+
+-> test U-Boot OK :-)
+
