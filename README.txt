@@ -525,3 +525,14 @@ Got signal 14 (3)
 
 -> test U-Boot OK :-)
 
+
+
+
+
+TODO
+====
+
+- GPIO sur Pi et/ou BBB voir https://gist.github.com/ketul93/d717555951174a74c8b4
+
+- RTEMS / libbsd à tester ? https://github.com/RTEMS/rtems-libbsd
+
