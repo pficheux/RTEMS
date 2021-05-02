@@ -523,8 +523,31 @@ Got signal 14 (3)
 
 - Modif example -> utiliser #define CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER !!
 
--> test U-Boot OK :-)
+- Modif example -> utiliser #define CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER !!
 
+Si on définit CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER on inclut
+
+#ifdef CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER
+  #if defined(CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER) \
+    || defined(CONFIGURE_APPLICATION_NEEDS_SIMPLE_TASK_CONSOLE_DRIVER)
+    #error "CONFIGURE_APPLICATION_NEEDS_CONSOLE_DRIVER, CONFIGURE_APPLICATION_NEEDS_SIMPLE_CONSOLE_DRIVER, and CONFIGURE_APPLICATION_NEEDS_SIMPLE_TASK_CONSOLE_DRIVER are mutually exclusive"
+  #endif
+
+  #include <rtems/console.h>
+#endif
+
+
+du fichier cpukit/include/rtems/confdefs/iodrivers.h
+
+Dans rtems/console.h on ajoute donc :
+
+#define CONSOLE_DRIVER_TABLE_ENTRY \
+  { console_initialize, console_open, console_close, \
+    console_read, console_write, console_control }
+
+-> appel de console_initialize() qui définit PL011 par défaut (mais ça n'explique pas l'utilisation de --console=/dev/ttyS0
+
+- Test GPIO BBB d'après https://jamesfitzsimons.com/2020/06/29/rtems-on-beaglebone-black-wireless/
 
 
 
@@ -532,7 +555,10 @@ Got signal 14 (3)
 TODO
 ====
 
-- GPIO sur Pi et/ou BBB voir https://gist.github.com/ketul93/d717555951174a74c8b4
+- GPIO/PWM sur Pi et/ou BBB voir
+
+https://gist.github.com/ketul93/d717555951174a74c8b4
+https://jamesfitzsimons.com/2020/06/29/rtems-on-beaglebone-black-wireless/
 
 - RTEMS / libbsd à tester ? https://github.com/RTEMS/rtems-libbsd
 
