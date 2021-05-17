@@ -9,17 +9,30 @@
 #include <time.h>
 #include <bsp/gpio.h>
 
-#define LED_GPIO 4 // led is on GPIO 4
+#define GPIO_OUT 4
+#define GPIO_IN 17
 
 void got_signal (int sig)
 {
-  static int cnt = 0;
+  static int cnt = 0, modulo = 2;
+  int btn_status;
 
-  printf ("Got signal %d (%d)\n", sig, ++cnt);
+  if (cnt == 0 || (cnt % 1000 == 0)) {
+    btn_status = rtems_gpio_get_value (GPIO_IN);
+    printf ("cnt= %d modulo= %d %d\n", cnt, modulo, btn_status);
+
+    if (btn_status == 0)
+      modulo++;
+    if (modulo == 6)
+      modulo = 2;
+  }
+	
   if (cnt % 2)
-    rtems_gpio_set (LED_GPIO);
+    rtems_gpio_set (GPIO_OUT);
   else
-    rtems_gpio_clear(LED_GPIO);
+    rtems_gpio_clear(GPIO_OUT);
+
+  cnt++;
 }
 
 void *POSIX_Init() 
@@ -37,7 +50,9 @@ void *POSIX_Init()
   rtems_gpio_initialize();
 
   /* Used Led 0 */
-  sc = rtems_gpio_request_pin(LED_GPIO, DIGITAL_OUTPUT, false, false, NULL);
+  sc = rtems_gpio_request_pin(GPIO_OUT, DIGITAL_OUTPUT, false, false, NULL);
+  assert(sc == RTEMS_SUCCESSFUL);
+  sc = rtems_gpio_request_pin(GPIO_IN, DIGITAL_INPUT, false, false, NULL);
   assert(sc == RTEMS_SUCCESSFUL);
 
   sig.sa_flags = 0;
@@ -56,8 +71,8 @@ void *POSIX_Init()
 
   ti.it_value.tv_sec = 0;
   ti.it_value.tv_nsec = 50000000;
-  ti.it_interval.tv_sec = 1;
-  ti.it_interval.tv_nsec = 0;
+  ti.it_interval.tv_sec = 0;
+  ti.it_interval.tv_nsec = 1000000;
 
   timer_settime(myTimer, 0, &ti, &ti_old);
 
