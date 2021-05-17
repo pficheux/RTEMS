@@ -399,7 +399,7 @@ Date:   Sat Oct 20 12:47:19 2018 +0200
 $ arm-rtems6-objcopy timer.exe -O binary timer.bin
 $ mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS -d timer.bin rtems.img
 
-=> setenv start_rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000 am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
+=> setenv rtems 'fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000 am335x-boneblack.dtb ; bootm 0x80800000 - 0x88000000'
 
 29/4/2021
 =========
@@ -549,7 +549,25 @@ Dans rtems/console.h on ajoute donc :
 
 - Test GPIO BBB d'après https://jamesfitzsimons.com/2020/06/29/rtems-on-beaglebone-black-wireless/
 
+14/5/2021
+=========
 
+- Test RED-V (RISC-V)
+
+Proche de https://github.com/pragnesh26992/rtems/blob/master/README-frdme310arty.md mais utilise un bootloader pour charger le DT...
+
+AFAIK Zephyr or FreedomStudio use a different approach as a header file is generated from the .dts and then
+used to create the binary (.bin then .hex). It looks like the binary is  "standalone" with no use of a bootloader (RED-V includes a Segger firmware to flash the
+board)...but I'm far from a RISC-V/SiFive expert :-)
+
+https://docs.zephyrproject.org/latest/guides/dts/intro.html#input-and-output-files
+
+-> paraît plutôt complexe à réaliser
+
+17/4/2021
+=========
+
+- Test exemple led sur BBB 'industrial' OK (normal)
 
 
 TODO
