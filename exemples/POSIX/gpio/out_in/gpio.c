@@ -1,4 +1,4 @@
-// Testing led for Pi 3
+// GPIO support for RTEMS
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -9,6 +9,7 @@
 #include <time.h>
 #include <bsp/gpio.h>
 
+// Pi 3
 #define GPIO_OUT 4
 #define GPIO_IN 17
 

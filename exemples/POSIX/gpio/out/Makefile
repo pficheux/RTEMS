@@ -6,16 +6,16 @@
 #  RTEMS_MAKEFILE_PATH is typically set in an environment variable
 #
 
-PGM=${ARCH}/cond_periodic_thread.exe
+PGM=${ARCH}/gpio.exe
 
 # optional managers required
 MANAGERS= all
 
 # C source names
-CSRCS = cond_periodic_thread.c
+CSRCS = gpio.c
 COBJS_ = $(CSRCS:.c=.o)
 COBJS = $(COBJS_:%=${ARCH}/%)
-CLEAN_ADDITIONS = *~
+CLEAN_ADDITIONS = *~ rtems.img
 
 include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 include $(RTEMS_CUSTOM)
@@ -27,4 +27,5 @@ all:    ${ARCH} $(PGM)
 
 $(PGM): $(OBJS)
 	$(make-exe)
+
 

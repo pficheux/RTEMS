@@ -7,7 +7,7 @@ MANAGERS=all
 CSRCS = init.c dummy_drv.c
 COBJS = $(CSRCS:%.c=${ARCH}/%.o)
 OBJS=$(COBJS)
-CLEAN_ADDITIONS = rtems.img
+CLEAN_ADDITIONS = rtems.img *~
 
 include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 include $(RTEMS_CUSTOM)
