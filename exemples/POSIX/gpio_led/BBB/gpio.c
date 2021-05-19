@@ -7,9 +7,11 @@
 #include <assert.h>
 #include <signal.h>
 #include <time.h>
+#include <sched.h>
 #include <bsp/gpio.h>
 
 #define GPIO_OUT  BBB_P8_7
+#define PERIOD_NS 1000000  // period in nsec
 
 void got_signal (int sig)
 {
@@ -32,18 +34,25 @@ void *POSIX_Init()
   struct itimerspec ti, ti_old;
   struct sigevent event;
   sigset_t mask;
+  struct sched_param sp;
 
   printf("Starting GPIO Testing\n");
 
+  // Set max priority, unfortunately not implemented in RTEMS/POSIX :-(
+  // https://docs.rtems.org/branches/master/posix-compliance/posix-compliance.html
+  sp.sched_priority = sched_get_priority_max(SCHED_FIFO);
+  sc = sched_setscheduler(0, SCHED_FIFO, &sp);
+  printf ("sc = %d\n", sc);
+  
   /* Initializes the GPIO API */
   rtems_gpio_initialize();
 
-  /* Used Led 0 */
-  //  sc = rtems_gpio_request_pin(BBB_LED_USR0, DIGITAL_OUTPUT, false, false, NULL);
+  /* Allocate GPIO */
   sc = rtems_gpio_request_pin(GPIO_OUT, DIGITAL_OUTPUT, false, false, NULL);
   assert(sc == RTEMS_SUCCESSFUL);
 
   /* Leds 1 to 3 off */
+  /*
   sc = rtems_gpio_request_pin(BBB_LED_USR1, DIGITAL_OUTPUT, false, false, NULL);
   assert(sc == RTEMS_SUCCESSFUL);
   rtems_gpio_clear(BBB_LED_USR1);
@@ -53,7 +62,7 @@ void *POSIX_Init()
   sc = rtems_gpio_request_pin(BBB_LED_USR3, DIGITAL_OUTPUT, false, false, NULL);
   assert(sc == RTEMS_SUCCESSFUL);
   rtems_gpio_clear(BBB_LED_USR3);
-
+  */
   
   sig.sa_flags = 0;
   sig.sa_handler = got_signal;
@@ -72,7 +81,7 @@ void *POSIX_Init()
   ti.it_value.tv_sec = 0;
   ti.it_value.tv_nsec = 50000000;
   ti.it_interval.tv_sec = 0;
-  ti.it_interval.tv_nsec = 2000000;
+  ti.it_interval.tv_nsec = PERIOD_NS;
 
   timer_settime(myTimer, 0, &ti, &ti_old);
 

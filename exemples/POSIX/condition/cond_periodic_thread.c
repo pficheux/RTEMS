@@ -7,8 +7,10 @@
 #include <sys/mman.h>
 #include <assert.h>
 
-//#include <bsp/gpio.h>
-// #define GPIO_OUT  BBB_P8_7
+#include <bsp/gpio.h>
+#define GPIO_OUT  BBB_P8_7
+
+#define PERIOD_NS 500000000
 
 pthread_mutex_t my_mutex;
 pthread_cond_t my_cond;
@@ -17,7 +19,7 @@ void *thread_process (void * arg)
 {
   struct timespec t;
   int status;
-  //  unsigned int cnt = 0;
+  unsigned int cnt = 0;
 
   while (1) 
     {
@@ -26,18 +28,17 @@ void *thread_process (void * arg)
       
       status = clock_gettime (CLOCK_REALTIME, &t);
       assert( !status );
-      t.tv_nsec = 0;
-      t.tv_sec += 1;
+      //      t.tv_sec = 0;
+      t.tv_nsec += PERIOD_NS;
       
       printf ("Periodic thread is running %llu !\n", t.tv_sec);
 
-      /*
       if (cnt % 2)
 	rtems_gpio_set (GPIO_OUT);
       else
 	rtems_gpio_clear(GPIO_OUT);
+
       cnt++;
-      */
       
       status = pthread_cond_timedwait (&my_cond, &my_mutex, &t);
       if ( status != ETIMEDOUT )
@@ -61,14 +62,13 @@ void main (int ac, char **av)
   int status;
 
   /* Initializes the GPIO API */
-  //  rtems_gpio_initialize();
+  rtems_gpio_initialize();
 
-  //  status = rtems_gpio_request_pin(GPIO_OUT, DIGITAL_OUTPUT, false, false, NULL);
-  //  assert(status == RTEMS_SUCCESSFUL);
+  status = rtems_gpio_request_pin(GPIO_OUT, DIGITAL_OUTPUT, false, false, NULL);
+  assert(status == RTEMS_SUCCESSFUL);
 
   pthread_mutex_init (&my_mutex, NULL);
   pthread_cond_init (&my_cond, NULL);
-
   
   if (pthread_create (&th, NULL, thread_process, NULL) < 0) {
     perror ("pthread_create");
