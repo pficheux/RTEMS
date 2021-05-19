@@ -5,7 +5,8 @@
 #include <rtems/error.h>
 #include <bsp/gpio.h>
 
-#define GPIO_OUT  BBB_P8_7
+//#define GPIO_OUT  BBB_P8_7
+#define GPIO_OUT 4
 
 /* CPU usage and Rate monotonic manger statistics */
 #include "rtems/cpuuse.h"

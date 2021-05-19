@@ -8,9 +8,10 @@
 #include <assert.h>
 #include <bsp/gpio.h>
 
-#define GPIO_OUT  BBB_P8_7
+//#define GPIO_OUT  BBB_P8_7
+#define GPIO_OUT   4
 
-#define PERIOD_NS 100000000
+#define PERIOD_NS 1000000
 
 pthread_mutex_t my_mutex;
 pthread_cond_t my_cond;

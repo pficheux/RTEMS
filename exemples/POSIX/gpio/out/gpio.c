@@ -11,6 +11,8 @@
 #include <bsp/gpio.h>
 
 #define GPIO_OUT  BBB_P8_7
+//#define GPIO_OUT 4
+
 #define PERIOD_NS 1000000  // period in nsec
 
 void got_signal (int sig)
@@ -35,14 +37,20 @@ void *POSIX_Init()
   struct sigevent event;
   sigset_t mask;
   struct sched_param sp;
-
+  rtems_task_priority  the_priority;
+  
   printf("Starting GPIO Testing\n");
 
   // Set max priority, unfortunately not implemented in RTEMS/POSIX :-(
   // https://docs.rtems.org/branches/master/posix-compliance/posix-compliance.html
+  sc = rtems_task_set_priority(RTEMS_SELF, 90 , &the_priority); 
+  sc = rtems_task_set_priority(RTEMS_SELF, RTEMS_CURRENT_PRIORITY, &the_priority); 
+  printf("main-- initial current priority : %d\n", (int)the_priority); 
+  /*
   sp.sched_priority = sched_get_priority_max(SCHED_FIFO);
   sc = sched_setscheduler(0, SCHED_FIFO, &sp);
   printf ("sc = %d\n", sc);
+  */
   
   /* Initializes the GPIO API */
   rtems_gpio_initialize();

@@ -15,11 +15,11 @@
 #include <assert.h>
 #include <bsp/gpio.h>
 
-#define GPIO_OUT  BBB_P8_7
+#define GPIO_OUT 4 //  BBB_P8_7
 
 pthread_t thid_square;
 
-#define PERIOD          2000000 // ns -> does not work if < 10 ms
+#define PERIOD          10000000 // ns -> does not work if < 10 ms
 
 unsigned long period_ns = 0;
 int loop_prt = 100;             /* print every 100 loops */ 

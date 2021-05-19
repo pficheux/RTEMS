@@ -617,6 +617,14 @@ rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 * Exemple GPIO (sans thread) OK mais on ne peut pas utiliser sched_setscheduler(), car pas implémenté -> jitter
 * Exemple 'condition' à corriger, retourne toujours une erreur pthread_cond_timedwait (voir https://stackoverflow.com/questions/17166083/how-to-use-pthread-cond-timedwait-with-millisecond) -> ajout tsnorm() mais irrégularité dans la période < 100 ms
 
+-> Test sur Pi 3, moins de jitter sur gpio (out) et rtems_square (CLASSIC) mais même problèmes
+-> Ajout priorité = 98 (Deterministic Priority Scheduler = sched par défaut) à gpio.c
+
+  sc = rtems_task_set_priority(RTEMS_SELF, 90 , &the_priority); 
+  sc = rtems_task_set_priority(RTEMS_SELF, RTEMS_CURRENT_PRIORITY, &the_priority); 
+  printf("main-- initial current priority : %d\n", (int)the_priority); 
+
+
 
 
 
