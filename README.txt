@@ -615,7 +615,7 @@ rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 * Test GPIO avec API Classic -> OK mais du jitter à 1 ms (RMS)
 * Exemple xenomai_pthread (basé sur clock_nanosleep()) limité à 2ms
 * Exemple GPIO (sans thread) OK mais on ne peut pas utiliser sched_setscheduler(), car pas implémenté -> jitter
-* Exemple 'condition' à corriger, retourne toujours une erreur pthread_cond_timedwait
+* Exemple 'condition' à corriger, retourne toujours une erreur pthread_cond_timedwait (voir https://stackoverflow.com/questions/17166083/how-to-use-pthread-cond-timedwait-with-millisecond)
 
 
 
