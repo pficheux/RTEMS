@@ -1,13 +1,14 @@
 /*
- * RTEMS GPIO driver for RPi
+ * RTEMS dummy driver
  */
 #include <rtems.h>
 #include <bsp.h>
-#include "rpi_gpio.h"
+#include "dummy_drv.h"
 
 static char initialized;
+static int value;
 
-rtems_device_driver rpi_gpio_initialize(
+rtems_device_driver dummy_drv_initialize(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
   void *pargp
@@ -19,7 +20,7 @@ rtems_device_driver rpi_gpio_initialize(
     initialized = 1;
 
     status = rtems_io_register_name(
-      "/dev/rpi_gpio",
+      "/dev/dummy_drv",
       major,
       (rtems_device_minor_number) 0
     );
@@ -31,56 +32,51 @@ rtems_device_driver rpi_gpio_initialize(
   return RTEMS_SUCCESSFUL;
 }
 
-rtems_device_driver rpi_gpio_open(
+rtems_device_driver dummy_drv_open(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
   void *pargp
 )
 {
+  printk ("%s\n", __FUNCTION__);
   return RTEMS_SUCCESSFUL;
 }
 
-rtems_device_driver rpi_gpio_close(
+rtems_device_driver dummy_drv_close(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
   void *pargp
 )
 {
+  printk ("%s\n", __FUNCTION__);
   return RTEMS_SUCCESSFUL;
 }
 
-rtems_device_driver rpi_gpio_control(
+rtems_device_driver dummy_drv_control(
   rtems_device_major_number major,
   rtems_device_minor_number minor,
   void *pargp
 )
 {
-  int n, cmd;
+  int v, cmd;
   rtems_libio_ioctl_args_t *args = pargp;
 
-  n = (int)(args->buffer);
+  v = (int)(args->buffer);
   cmd = (int)(args->command);
 
-  printk ("rpi_gpio_control: cmd %x OK !\n", cmd); 
-  
   switch (cmd) {
-  case RPI_GPIO_SET :
+  case DUMMY_SET :
+    //    printk ("%s: SET\n", __FUNCTION__);
+    value = v;
     break;
 
-  case RPI_GPIO_CLR :
-    break;
-
-  case RPI_GPIO_OUT :
-    break;
-
-  case RPI_GPIO_IN :
-    break;
-
-  case RPI_GPIO_READ :
+  case DUMMY_GET :
+    //    printk ("%s: GET\n", __FUNCTION__);
+    args->ioctl_return = value;
     return RTEMS_SUCCESSFUL;
 
   default: 
-    printk ("rpi_gpio_control: unknown cmd %x\n", cmd); 
+    printk ("dummy_drv_control: unknown cmd %x\n", cmd); 
 
     args->ioctl_return = -1;
     return RTEMS_UNSATISFIED;

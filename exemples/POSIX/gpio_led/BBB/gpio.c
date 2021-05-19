@@ -1,4 +1,4 @@
-// Testing led for BBB
+// Testing GPIO for BBB
 
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -33,7 +33,7 @@ void *POSIX_Init()
   struct sigevent event;
   sigset_t mask;
 
-  printf("Starting timer + GPIO Testing\n");
+  printf("Starting GPIO Testing\n");
 
   /* Initializes the GPIO API */
   rtems_gpio_initialize();

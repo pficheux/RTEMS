@@ -608,12 +608,15 @@ neblack.dtb ; bootm 0x80800000 - 0x88000000
 rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 -boneblack.dtb ; bootm 0x80800000 - 0x88000000
 
-- Ajout exemple driver -> l'ancien fonctionne !
+- Ajout exemple driver 'dummy_drv' basé sur rpi_gpio
+
+
+
 
 TODO
 ====
 
-- GPIO/PWM sur Pi et/ou BBB voir
+- PWM sur Pi et/ou BBB voir
 
 https://gist.github.com/ketul93/d717555951174a74c8b4
 https://jamesfitzsimons.com/2020/06/29/rtems-on-beaglebone-black-wireless/
