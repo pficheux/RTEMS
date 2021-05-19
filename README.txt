@@ -564,11 +564,51 @@ https://docs.zephyrproject.org/latest/guides/dts/intro.html#input-and-output-fil
 
 -> paraît plutôt complexe à réaliser
 
-17/4/2021
+17/5/2021
 =========
 
 - Test exemple led sur BBB 'industrial' OK (normal)
 
+- Test timer 1ms sur Pi 3 -> un peu de glitch à l'oscillo
+
+19/5/2021
+=========
+
+- Test timer 1ms sur BBB -> un peu de jitter
+
+- Test pthread_create OK
+
+- Test pthread_cond_timedwait -> ajout du lock/unlock du mutex pour que ça fonctionne
+
+- Test QEMU/x86 sans graphique (mieux !) :
+
+$ qemu-system-i386 -kernel <file.exe> -nographic -serial stdio -append --console=/dev/com1 -monitor none
+
+- - Ajout macro à beagleboneblack.cfg pour créer rtems.img
+
+# Create binary and U-Boot image
+define bsp-post-link
+    $(OBJCOPY) -O binary --strip-all \
+        $(basename $@)$(EXEEXT) $(basename $@)$(DOWNEXT)
+    $(SIZE) $(basename $@)$(EXEEXT)
+    mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS -d $(basename $@)$(DOWNEXT) rtems.img
+endef
+
+- Test TFTP BBB (ne fonctionne pas avec le Wi-Fi !)
+
+$ scp rtems.img pierre@192.168.1.20:/tftpboot
+
+nouvelle macros dans U-Boot :
+
+=> pri rtems_sd                                                                 
+rtems_sd=fatload mmc 0 0x80800000 rtems.img ; fatload mmc 0 0x88000000 am335x-bo
+neblack.dtb ; bootm 0x80800000 - 0x88000000                                     
+
+=> pri rtems_tftp                                  
+rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
+-boneblack.dtb ; bootm 0x80800000 - 0x88000000
+
+- Ajout exemple driver -> l'ancien fonctionne !
 
 TODO
 ====

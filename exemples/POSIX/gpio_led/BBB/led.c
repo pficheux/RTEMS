@@ -8,16 +8,20 @@
 #include <signal.h>
 #include <time.h>
 #include <bsp/gpio.h>
- 
+
+#define GPIO_OUT  BBB_P8_7
+
 void got_signal (int sig)
 {
   static int cnt = 0;
 
-  printf ("Got signal %d (%d)\n", sig, ++cnt);
+  //  printf ("Got signal %d (%d)\n", sig, cnt);
   if (cnt % 2)
-    rtems_gpio_set (BBB_LED_USR0);
+    rtems_gpio_set (GPIO_OUT);
   else
-    rtems_gpio_clear(BBB_LED_USR0);
+    rtems_gpio_clear(GPIO_OUT);
+
+  cnt++;
 }
 
 void *POSIX_Init() 
@@ -35,7 +39,8 @@ void *POSIX_Init()
   rtems_gpio_initialize();
 
   /* Used Led 0 */
-  sc = rtems_gpio_request_pin(BBB_LED_USR0, DIGITAL_OUTPUT, false, false, NULL);
+  //  sc = rtems_gpio_request_pin(BBB_LED_USR0, DIGITAL_OUTPUT, false, false, NULL);
+  sc = rtems_gpio_request_pin(GPIO_OUT, DIGITAL_OUTPUT, false, false, NULL);
   assert(sc == RTEMS_SUCCESSFUL);
 
   /* Leds 1 to 3 off */
@@ -66,8 +71,8 @@ void *POSIX_Init()
 
   ti.it_value.tv_sec = 0;
   ti.it_value.tv_nsec = 50000000;
-  ti.it_interval.tv_sec = 1;
-  ti.it_interval.tv_nsec = 0;
+  ti.it_interval.tv_sec = 0;
+  ti.it_interval.tv_nsec = 2000000;
 
   timer_settime(myTimer, 0, &ti, &ti_old);
 
