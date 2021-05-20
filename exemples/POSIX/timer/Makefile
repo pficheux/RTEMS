@@ -15,7 +15,7 @@ MANAGERS= all
 CSRCS = timer.c
 COBJS_ = $(CSRCS:.c=.o)
 COBJS = $(COBJS_:%=${ARCH}/%)
-CLEAN_ADDITIONS = *~
+CLEAN_ADDITIONS = *~ rtems.img
 
 include $(RTEMS_MAKEFILE_PATH)/Makefile.inc
 include $(RTEMS_CUSTOM)
