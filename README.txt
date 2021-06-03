@@ -331,7 +331,7 @@ Testing time     : 0:00:02.504795
 -> Compilateur
 
 $ cd rtems
-$ ../source-builder/sb-set-builder --log=l-i386-master.txt --prefix=/media/pierre/SANDISK_PF/RTEMS/rtems-i386-master 6/i386-master
+$ ../source-builder/sb-set-builder --log=l-i386-master.txt --prefix=/media/pierre/SANDISK_PF/RTEMS/rtems-i386-master 6/rtems-i386
 
 -> BSP
 
@@ -406,7 +406,7 @@ $ mkimage -A arm -O linux -T kernel -C none -a 0x80000000 -e 0x80000000 -n RTEMS
 
 - Nouveau test RISC-V 64
 
-$ ./waf configure --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv64imafd_medan$ ./waf 
+$ ./waf configure --prefix=/media/pierre/SANDISK_PF/RTEMS/target_rv64imafd_medany ./waf 
 $ ./waf install
 
 $ export PATH=$PATH:/opt/qemu/bin/
@@ -584,7 +584,7 @@ https://docs.zephyrproject.org/latest/guides/dts/intro.html#input-and-output-fil
 
 $ qemu-system-i386 -kernel <file.exe> -nographic -serial stdio -append --console=/dev/com1 -monitor none
 
-- - Ajout macro à beagleboneblack.cfg pour créer rtems.img
+- Ajout macro à beagleboneblack.cfg pour créer rtems.img
 
 # Create binary and U-Boot image
 define bsp-post-link
@@ -633,6 +633,10 @@ rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 
 - Test l'envoi de signal à un thread ? https://devarea.com/linux-handling-signals-in-a-multithreaded-application/#.YKYBK6IzY5k
 
+28/5/2021
+=========
+
+- Test SMP sur Pi3 + smp01 -> KO
 
 
 

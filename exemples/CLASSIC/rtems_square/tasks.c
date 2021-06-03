@@ -5,6 +5,9 @@
 #include <rtems/error.h>
 #include <bsp/gpio.h>
 
+// To print statistics
+//#define PRINT_STATS
+
 //#define GPIO_OUT  BBB_P8_7
 #define GPIO_OUT 4
 
@@ -18,8 +21,8 @@
 // Rate Monotonic Scheduling
 //
 rtems_task Task_Rate_Monotonic_Period(
-  rtems_task_argument unused
-)
+				      rtems_task_argument unused
+				      )
 {
   rtems_time_of_day time;
   rtems_status_code status;
@@ -57,20 +60,21 @@ rtems_task Task_Rate_Monotonic_Period(
     else
       rtems_gpio_clear(GPIO_OUT);
 
+#idef PRINT_STATS
     // Print stats ?
-    //    if (count % PERIOD_TASK_RATE_MONOTONIC == 0) {
-      //      ticks_since_boot = rtems_clock_get_ticks_since_boot();
-      //      printf(" - Ticks since boot: %" PRIu32 " %d %d\n", ticks_since_boot, rtems_clock_get_ticks_per_second(), count);
-      //      rtems_rate_monotonic_report_statistics();
-      //printf ("t = %d\n", rtems_clock_get_ticks_per_second() / PERIOD_TASK_RATE_MONOTONIC);
-    //    }
-
+    if (count % PERIOD_TASK_RATE_MONOTONIC == 0) {
+      ticks_since_boot = rtems_clock_get_ticks_since_boot();
+      printf(" - Ticks since boot: %" PRIu32 " %d %d\n", ticks_since_boot, rtems_clock_get_ticks_per_second(), count);
+      rtems_rate_monotonic_report_statistics();
+      printf ("t = %d\n", rtems_clock_get_ticks_per_second() / PERIOD_TASK_RATE_MONOTONIC);
+    }
+#endif
     
     // Block until RM period has expired
     status = rtems_rate_monotonic_period(
-      RM_period,
-      rtems_clock_get_ticks_per_second() / PERIOD_TASK_RATE_MONOTONIC
-    );
+					 RM_period,
+					 rtems_clock_get_ticks_per_second() / PERIOD_TASK_RATE_MONOTONIC
+					 );
 
     // Overrun ?
     if( RTEMS_SUCCESSFUL != status ) {

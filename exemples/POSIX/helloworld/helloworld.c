@@ -10,7 +10,7 @@ void *POSIX_Init()
 void main (int ac, char **av)
 #endif
 {
-  printf ("Hello RTEMS (POSIX)\n");
+  printf ("Hello RTEMS (POSIX) !\n");
 }
 
 #ifdef __rtems__
