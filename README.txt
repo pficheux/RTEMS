@@ -653,6 +653,9 @@ rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 * i386 OK
 * x86_64 (amd64 KO)
 
+Test avec KVM :
+
+$ kvm -kernel o-optimize/timer.exe -name RTEMS
 
 
 TODO
