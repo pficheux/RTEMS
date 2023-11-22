@@ -645,6 +645,15 @@ rtems_tftp=tftp 0x80800000 $serverip:rtems.img ; fatload mmc 0 0x88000000 am335x
 - Test I2C sur Pi 3 -> KO
 
 
+22/11/2023
+==========
+
+- Test rtems-5.3
+
+* i386 OK
+* x86_64 (amd64 KO)
+
+
 
 TODO
 ====
