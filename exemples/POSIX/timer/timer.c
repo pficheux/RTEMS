@@ -8,7 +8,7 @@
 void *threadfn1(void *p)
 {
   while(1){
-    printf("thread1 ID= %x\n", pthread_self());
+    printf("RTEMS/POSIX thread1 ID= %x\n", pthread_self());
     sleep(2);
   }
   return 0;
@@ -17,7 +17,7 @@ void *threadfn1(void *p)
 void *threadfn2(void *p)
 {
   while(1){
-    printf("thread2 ID= %x\n", pthread_self());
+    printf("RTEMS/POSIX thread2 ID= %x\n", pthread_self());
     sleep(2);
   }
   return 0;
@@ -26,7 +26,7 @@ void *threadfn2(void *p)
 void *threadfn3(void *p)
 {
   while(1){
-    printf("thread3 ID= %x\n", pthread_self());
+    printf("RTEMS/POSIX thread3 ID= %x\n", pthread_self());
     sleep(2);
   }
   return 0;
